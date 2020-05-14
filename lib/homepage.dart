@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:pie_chart/pie_chart.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -31,11 +33,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future fetchData() async {
+    fetchWorldWideData();
+    fetchCountryData();
+  }
+
 @override
   void initState() {
     super.initState();
-    fetchWorldWideData();
-    fetchCountryData();
+    fetchData();
   }
 
   @override
@@ -57,95 +63,115 @@ class _HomePageState extends State<HomePage> {
         ],
         centerTitle: false,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(10.0),
-              height: 100.0,
-              color: Colors.orange[100],
-              child: Text(
-                DataSource.quote,
-                style: TextStyle(
-                  color: Colors.orange[800],
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold
+      body: RefreshIndicator(
+        onRefresh: fetchData,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10.0),
+                height: 100.0,
+                color: Colors.orange[100],
+                child: Text(
+                  DataSource.quote,
+                  style: TextStyle(
+                    color: Colors.orange[800],
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'WorldWide',
-                    style: TextStyle(
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => CountryPage()));
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: primaryBlack,
-                        borderRadius: BorderRadius.circular(
-                          15
-                        )
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'WorldWide',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          'Regional',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
+                    ),
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CountryPage()));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: primaryBlack,
+                          borderRadius: BorderRadius.circular(
+                            15
+                          )
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            'Regional',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white
+                            ),
                           ),
                         ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+              worldWideData == null ? CircularProgressIndicator() : WorldWidePanel(worldData: worldWideData),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: PieChart(
+                  dataMap: {
+                    'Confirmed': worldWideData['cases'].toDouble(),
+                    'Active': worldWideData['active'].toDouble(),
+                    'Recovered': worldWideData['recovered'].toDouble(),
+                    'Deaths': worldWideData['deaths'].toDouble(),
+                  },
+                  colorList: [
+                    Colors.red,
+                    Colors.blue,
+                    Colors.green,
+                    Colors.grey[900]
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Text(
+                  'Most Affected Countries',
+                  style: TextStyle(
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.bold
                   ),
-                ],
-              ),
-            ),
-            worldWideData == null ? CircularProgressIndicator() : WorldWidePanel(worldData: worldWideData),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(
-                'Most Affected Countries',
-                style: TextStyle(
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.bold
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            countryData == null?Container():MostAffectedPanel(countryData: countryData),
-            InfoPanel(),
-            SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: Text(
-                "We are Together in the Fight",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0
+              SizedBox(
+                height: 10.0,
+              ),
+              countryData == null?Container():MostAffectedPanel(countryData: countryData),
+              InfoPanel(),
+              SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: Text(
+                  "We are Together in the Fight",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 50.0,
-            )
-          ],
+              SizedBox(
+                height: 50.0,
+              )
+            ],
+          ),
         ),
       )
     );
