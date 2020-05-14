@@ -1,6 +1,9 @@
 import 'package:covidtracker/datasource.dart';
+import 'package:covidtracker/pages/countrypage.dart';
+import 'package:covidtracker/panels/infopanel.dart';
 import 'package:covidtracker/panels/mostaffectedcountries.dart';
 import 'package:covidtracker/panels/worldwidepanel.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   List countryData;
   fetchCountryData() async {
-    http.Response response = await http.get("https://corona.lmao.ninja/v2/countries");
+    http.Response response = await http.get("https://corona.lmao.ninja/v2/countries?sort=cases");
     setState(() {
       countryData = json.decode(response.body);
     });
@@ -42,6 +45,16 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           'Covid Tracker'
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Theme.of(context).brightness==Brightness.light?Icons.lightbulb_outline:Icons.highlight
+            ),
+            onPressed: (){
+              DynamicTheme.of(context).setBrightness(Theme.of(context).brightness==Brightness.light?Brightness.dark:Brightness.light);
+            },
+          )
+        ],
         centerTitle: false,
       ),
       body: SingleChildScrollView(
@@ -74,21 +87,26 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: primaryBlack,
-                      borderRadius: BorderRadius.circular(
-                        15
-                      )
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        'Regional',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => CountryPage()));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: primaryBlack,
+                        borderRadius: BorderRadius.circular(
+                          15
+                        )
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          'Regional',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                          ),
                         ),
                       ),
                     ),
@@ -111,6 +129,22 @@ class _HomePageState extends State<HomePage> {
               height: 10.0,
             ),
             countryData == null?Container():MostAffectedPanel(countryData: countryData),
+            InfoPanel(),
+            SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: Text(
+                "We are Together in the Fight",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 50.0,
+            )
           ],
         ),
       )
