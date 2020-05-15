@@ -9,14 +9,6 @@ class Search extends SearchDelegate {
   Search(this.countryList);
 
   @override
-  ThemeData appBarTheme(BuildContext context) {
-    return ThemeData(
-      primaryColor: primaryBlack,
-      brightness: DynamicTheme.of(context).brightness
-    );
-  }
-
-  @override
   List<Widget> buildActions(BuildContext context) {
       return [
         IconButton(
@@ -77,47 +69,48 @@ class Search extends SearchDelegate {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              suggestionList[index]['country'],
+                              '${suggestionList[index]['country']}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold
                               ),
                             ),
-                            Image.network(suggestionList[index]['countryInfo']['flag'],height: 50,width: 60),
+                            Image.network('${suggestionList[index]['countryInfo']['flag']}',height: 50,width: 60),
                           ],
                         )
                       ),
                       Expanded(
                         child: Container(
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                'Confirmed' + suggestionList[index]['cases'].toString(),      
+                                'Confirmed - ${suggestionList[index]['cases']}',      
                                 style: TextStyle(
                                   color: Colors.red,
                                   fontWeight: FontWeight.bold,
                                 ),           
                               ),
                               Text(
-                                'Active' + suggestionList[index]['active'].toString(),
-                                style: TextStyle(
+                                'Active - ${suggestionList[index]['active']}',
+                                 style: TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold,
                                 ),            
                               ),
                               Text(
-                                'Recovered' + suggestionList[index]['recovered'].toString(),
-                                style: TextStyle(
+                                'Recovered - ${suggestionList[index]['recovered']}',
+                                 style: TextStyle(
                                   color: Colors.green,
                                   fontWeight: FontWeight.bold,
                                 ),      
                               ),
                               Text(
-                                'Deaths' + suggestionList[index]['deaths'].toString(),
-                                style: TextStyle(
+                                'Deaths - ${suggestionList[index]['deaths']}',
+                                 style: TextStyle(
                                   color: Theme.of(context).brightness==Brightness.dark?Colors.grey[100]:Colors.grey[900],
                                   fontWeight: FontWeight.bold,
-                                ),          
+                                ),   
                               ),
                             ],
                           ),

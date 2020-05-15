@@ -17,7 +17,7 @@ class MostAffectedPanel extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Image.network(
-                  countryData[index]['countryInfo']['flag'],
+                  '${countryData[index]['countryInfo']['flag']}',
                   height: 25, 
                   ),
                 SizedBox(
@@ -33,7 +33,7 @@ class MostAffectedPanel extends StatelessWidget {
                   width: 30,
                 ),
                 Text(
-                  "Deaths: ${countryData[index]['deaths'].toString()}",
+                  "Deaths: ${countryData[index]['deaths']}",
                   style: TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold

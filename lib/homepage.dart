@@ -3,7 +3,6 @@ import 'package:covidtracker/pages/countrypage.dart';
 import 'package:covidtracker/panels/infopanel.dart';
 import 'package:covidtracker/panels/mostaffectedcountries.dart';
 import 'package:covidtracker/panels/worldwidepanel.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -34,14 +33,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future fetchData() async {
-    fetchWorldWideData();
-    fetchCountryData();
+    await fetchWorldWideData();
+    await fetchCountryData();
   }
 
 @override
   void initState() {
-    super.initState();
     fetchData();
+    super.initState();
   }
 
   @override
@@ -51,17 +50,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           'Covid Tracker'
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Theme.of(context).brightness==Brightness.light?Icons.lightbulb_outline:Icons.highlight
-            ),
-            onPressed: (){
-              DynamicTheme.of(context).setBrightness(Theme.of(context).brightness==Brightness.light?Brightness.dark:Brightness.light);
-            },
-          )
-        ],
-        centerTitle: false,
+        centerTitle: true,
       ),
       body: RefreshIndicator(
         onRefresh: fetchData,
@@ -84,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
+                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -141,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                 child: Text(
                   'Most Affected Countries',
                   style: TextStyle(

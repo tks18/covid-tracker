@@ -1,51 +1,61 @@
+import 'package:covidtracker/datasource.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'search.dart';
 
-class CountryPage extends StatefulWidget {
+class Search extends SearchDelegate {
+
+  final List indiaState;
+
+  Search(this.indiaState);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return ThemeData(
+      primaryColor: primaryBlack,
+      brightness: DynamicTheme.of(context).brightness
+    );
+  }
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+      return [
+        IconButton(
+          icon: Icon(
+            Icons.clear
+          ),
+          onPressed: (){
+            query='';
+          },
+        )
+      ];
+    }
   
-  @override
-  _CountryPageState createState() => _CountryPageState();
-}
-
-class _CountryPageState extends State<CountryPage> {
-
-  List countryData;
-  fetchCountryData() async {
-    http.Response response = await http.get("https://corona.lmao.ninja/v2/countries");
-    setState(() {
-      countryData = json.decode(response.body);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchCountryData();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.search
-            ),
-            onPressed: (){
-              showSearch(context: (context), delegate: Search(countryData));
-            },
-          )
-        ],
-        title: Text(
-          'Country Stats'
+    @override
+    Widget buildLeading(BuildContext context) {
+      return IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios
         ),
-      ),
-      body: countryData == null ? CircularProgressIndicator(): ListView.builder(
-        itemBuilder: (context,index){
-          return Card(
+        onPressed: (){
+          Navigator.pop(context);
+        },
+      );
+    }
+  
+    @override
+    Widget buildResults(BuildContext context) {
+      return Container(
+
+      );
+    }
+  
+    @override
+    Widget buildSuggestions(BuildContext context) {
+      {
+        final suggestionList = query.isEmpty?indiaState:indiaState.where((element)=>element['state'].toString().toLowerCase().startsWith(query)).toList();
+          return ListView.builder(
+            itemBuilder: (context, index) {
+              return Card(
             child: Container(
               height: 130.0,
               margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
@@ -57,54 +67,47 @@ class _CountryPageState extends State<CountryPage> {
                   offset: Offset(0, 10),
                 )],
               ),
-              child: Row(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
                     width: 200.0,
                     margin: EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          '${countryData[index]['country']}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                        Image.network('${countryData[index]['countryInfo']['flag']}',height: 50,width: 60),
-                      ],
+                    child: Text(
+                      '${indiaState[index]['state']}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold
+                      ),
                     )
                   ),
                   Expanded(
                     child: Container(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'Confirmed - ${countryData[index]['cases']}',      
+                            'Confirmed - ${indiaState[index]['confirmed']}',      
                             style: TextStyle(
                               color: Colors.red,
                               fontWeight: FontWeight.bold,
                             ),           
                           ),
                           Text(
-                            'Active - ${countryData[index]['active']}',
+                            'Active - ${indiaState[index]['active']}',
                              style: TextStyle(
                               color: Colors.blue,
                               fontWeight: FontWeight.bold,
                             ),            
                           ),
                           Text(
-                            'Recovered - ${countryData[index]['recovered']}',
+                            'Recovered - ${indiaState[index]['recovered']}',
                              style: TextStyle(
                               color: Colors.green,
                               fontWeight: FontWeight.bold,
                             ),      
                           ),
                           Text(
-                            'Deaths - ${countryData[index]['deaths']}',
+                            'Deaths - ${indiaState[index]['deaths']}',
                              style: TextStyle(
                               color: Theme.of(context).brightness==Brightness.dark?Colors.grey[100]:Colors.grey[900],
                               fontWeight: FontWeight.bold,
@@ -118,9 +121,10 @@ class _CountryPageState extends State<CountryPage> {
               ),
             ),
           );
-        },
-        itemCount: countryData == null ? 0 : countryData.length,
-      ),
-    );
+            },
+            itemCount: suggestionList.length,
+          );
+      }
   }
+  
 }

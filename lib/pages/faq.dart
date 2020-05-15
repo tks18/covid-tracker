@@ -14,7 +14,7 @@ class FaqPage extends StatelessWidget {
         itemBuilder: (context, index){
           return ExpansionTile(
             title: Text(
-              DataSource.questionAnswers[index]['questions'],
+              DataSource.questionAnswers[index]['question'],
               style: TextStyle(
                 fontWeight: FontWeight.bold
               ),
